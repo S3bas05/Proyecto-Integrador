@@ -8,7 +8,7 @@ ImageFlow es una aplicación cliente-servidor para cargar, registrar, consultar,
 
 ## Alcance de esta entrega
 
-Esta versión corresponde al prototipo funcional inicial de la semana 10. El código ejecutable de la aplicación está escrito en **Go** y utiliza únicamente la biblioteca estándar del lenguaje. No se incluye código fuente en Python ni en otro lenguaje.
+Esta versión corresponde al prototipo funcional inicial de la semana 10. El código ejecutable de la aplicación está escrito en **Go** y utiliza únicamente la biblioteca estándar del lenguaje.
 
 La integración con el servicio de autenticación FastAPI y la conexión entre sedes no forman parte de esta semana; la guía académica las ubica en fases posteriores. En esta entrega no se duplica el componente de autenticación.
 
@@ -24,46 +24,11 @@ La integración con el servicio de autenticación FastAPI y la conexión entre s
 - Eliminar una imagen y su registro.
 - Informar errores de conexión, datos inválidos, formatos no permitidos, archivos demasiado grandes y recursos inexistentes.
 
-## Documentación de esta entrega
-
-- Informe técnico PDF: `docs/phase2/Informe_Tecnico_ImageFlow_Fase2.pdf`.
-- Informe editable: `docs/phase2/Informe_Tecnico_ImageFlow_Fase2.docx`.
-- Diagrama: `docs/phase2/arquitectura_componentes.png`.
-- Guion del video: `docs/phase2/guion_video.md`.
-- Requisitos y trazabilidad: `docs/requirements/` y `docs/traceability/`.
-
 ## Requisitos
 
 - Go 1.22 o superior.
 - Git, si se desea clonar el repositorio.
 - No se requieren dependencias externas de Go.
-
-## Ejecutar el prototipo
-
-1. Abrir una terminal dentro de `app-go`.
-2. Iniciar el servidor:
-
-```bash
-go run ./cmd/server
-```
-
-3. Abrir una segunda terminal, también dentro de `app-go`.
-4. Iniciar el cliente:
-
-```bash
-go run ./cmd/client
-```
-
-El servidor y el cliente son procesos independientes. El cliente se conecta por HTTP al servidor. Para seguir la demostración, usar el archivo `testdata/imagen_demo.png` como imagen de prueba.
-
-## Pruebas automatizadas
-
-Desde la carpeta `app-go`:
-
-```bash
-go test ./...
-go vet ./...
-```
 
 ## Estructura
 
@@ -102,20 +67,6 @@ imageflow/
 | `IMAGEFLOW_DATA_DIR` | `./data` | Carpeta donde se guardan imágenes y metadatos. |
 | `IMAGEFLOW_SERVER_URL` | `http://localhost:8080` | URL a la que se conecta el cliente. |
 
-Para cambiar el puerto del servidor en macOS/Linux:
-
-```bash
-IMAGEFLOW_PORT=8081 go run ./cmd/server
-```
-
-En la terminal del cliente:
-
-```bash
-IMAGEFLOW_SERVER_URL=http://localhost:8081 go run ./cmd/client
-```
-
-Para utilizar otro equipo como servidor, reemplazar `localhost` por la IP del equipo servidor y permitir el puerto en el firewall. Esta configuración permite una prueba de laboratorio en la red local.
-
 ## Endpoints HTTP
 
 | Método | Ruta | Función |
@@ -148,16 +99,14 @@ Para utilizar otro equipo como servidor, reemplazar `localhost` por la IP del eq
 | Comunicación entre sedes y configuración de red | Fases posteriores |
 | Base de datos relacional, miniaturas y análisis antivirus | Fuera del alcance de este prototipo |
 
-## Autoría, licencia y uso de IA
+## Autoría, licencia 
 
 **Autor:** Sebastián Alexis Cumbal Molineros.  
 La presente entrega se desarrolla de forma individual. El autor asume el análisis, programación del cliente y servidor, modelado, validaciones, pruebas y documentación. La modalidad individual debe quedar registrada y autorizada por el docente.
-
-Se utilizó ChatGPT como herramienta de apoyo para organizar la arquitectura, revisar código y preparar documentación. El autor debe verificar, comprender y poder explicar cada componente del proyecto.
 
 Licencia MIT. Consultar `LICENSE`.
 
 ## Enlaces de entrega
 
-- Repositorio Git: **PENDIENTE: pegar URL pública o con permisos del repositorio.**
+- Repositorio Git: (https://github.com/S3bas05/Proyecto-Integrador.git)
 - Video demostrativo: **PENDIENTE: pegar URL del video.**
