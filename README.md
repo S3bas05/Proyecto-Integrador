@@ -109,4 +109,4 @@ Licencia MIT. Consultar `LICENSE`.
 ## Enlaces de entrega
 
 - Repositorio Git: (https://github.com/S3bas05/Proyecto-Integrador.git)
-- Video demostrativo: **PENDIENTE: pegar URL del video.**
+- Video demostrativo: (https://drive.google.com/file/d/1MwbV9n6RWsfbwOnDv75wkJ5XSRVR6lkt/view?usp=sharing)
