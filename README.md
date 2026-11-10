@@ -1,154 +1,163 @@
-Sistema empresarial distribuido para la gestión centralizada de imágenes entre dos sedes.
+# ImageFlow
 
----
+**Prototipo empresarial para la gestión de imágenes**  
+Segundo entregable del Proyecto Integrador - Semana 10  
+Asignatura: Programación Orientada a Objetos
 
-Estado
-**Fase 1 - Planeación del software.** En esta etapa se definen problema, alcance, actores, requisitos, casos de uso, trazabilidad, arquitectura preliminar, métricas y organización del repositorio. El código funcional se implementará de forma incremental en las siguientes fases.
+ImageFlow es una aplicación cliente-servidor para cargar, registrar, consultar, buscar, descargar y eliminar imágenes desde un cliente de consola desarrollado en Go. El servidor también está desarrollado en Go.
 
+## Alcance de esta entrega
 
+Esta versión corresponde al prototipo funcional inicial de la semana 10. El código ejecutable de la aplicación está escrito en **Go** y utiliza únicamente la biblioteca estándar del lenguaje. No se incluye código fuente en Python ni en otro lenguaje.
 
-Problema Organizacional
-La empresa trabaja con imágenes de proyectos, diseños, documentación y evidencias desde dos sedes. Cuando los archivos se mantienen en ubicaciones diferentes, se dificulta su localización, clasificación, control de acceso y seguimiento. Además, no existen métricas uniformes para conocer cuántas operaciones se realizan, cuánto tardan o qué errores ocurren.
+La integración con el servicio de autenticación FastAPI y la conexión entre sedes no forman parte de esta semana; la guía académica las ubica en fases posteriores. En esta entrega no se duplica el componente de autenticación.
 
-**ImageFlow** propone un repositorio lógico central con autenticación y trazabilidad para que ambas sedes utilicen las mismas reglas de acceso y administración.
+## Funcionalidades implementadas
 
+- Cargar imágenes desde el cliente al servidor.
+- Validar formato de imagen y tamaño máximo de 10 MiB.
+- Registrar ID, nombre, tipo MIME, tamaño, categoría y fecha.
+- Guardar los archivos binarios por separado de los metadatos JSON.
+- Consultar todas las imágenes.
+- Buscar por nombre y/o categoría.
+- Descargar una imagen por su identificador.
+- Eliminar una imagen y su registro.
+- Informar errores de conexión, datos inválidos, formatos no permitidos, archivos demasiado grandes y recursos inexistentes.
 
+## Documentación de esta entrega
 
-Objetivo General
-Desarrollar una aplicación empresarial cliente-servidor en Go para centralizar la gestión segura de imágenes entre dos sedes, integrando autenticación mediante FastAPI, control de acceso, metadatos y registros de operación que permitan validar funcionalidad, rendimiento y uso del sistema.
+- Informe técnico PDF: `docs/phase2/Informe_Tecnico_ImageFlow_Fase2.pdf`.
+- Informe editable: `docs/phase2/Informe_Tecnico_ImageFlow_Fase2.docx`.
+- Diagrama: `docs/phase2/arquitectura_componentes.png`.
+- Guion del video: `docs/phase2/guion_video.md`.
+- Requisitos y trazabilidad: `docs/requirements/` y `docs/traceability/`.
 
----
+## Requisitos
 
-Funcionalidades Previstas
-- Iniciar sesión mediante el servicio FastAPI.
-- Cargar imágenes autorizadas.
-- Registrar metadatos de cada recurso.
-- Clasificar imágenes por categoría.
-- Listar, buscar y filtrar imágenes.
-- Descargar imágenes.
-- Eliminar imágenes con rol Administrador.
-- Registrar operaciones y métricas.
+- Go 1.22 o superior.
+- Git, si se desea clonar el repositorio.
+- No se requieren dependencias externas de Go.
 
----
+## Ejecutar el prototipo
 
-Actores
-- **Empleado:** Carga, clasifica, consulta, busca y descarga imágenes.
-- **Administrador:** Realiza las operaciones del empleado y puede eliminar recursos y consultar métricas.
-- **Servicio FastAPI:** Valida credenciales, emite sesión/token y apoya la verificación de autorización.
+1. Abrir una terminal dentro de `app-go`.
+2. Iniciar el servidor:
 
----
+```bash
+go run ./cmd/server
+```
 
-Arquitectura preliminar
+3. Abrir una segunda terminal, también dentro de `app-go`.
+4. Iniciar el cliente:
 
-Sede A - Cliente Go ─┐
-                     ├── Red entre sedes ── Servidor ImageFlow (Go) ── Almacenamiento
-Sede B - Cliente Go ─┘                         │
-                                               └── Servicio FastAPI (auth) 
+```bash
+go run ./cmd/client
+```
 
-El servidor Go concentra las operaciones de imágenes y consulta el servicio FastAPI antes de completar recursos protegidos. Las dos sedes utilizan el mismo servicio lógico, evitando duplicar reglas de autenticación y gestión.
+El servidor y el cliente son procesos independientes. El cliente se conecta por HTTP al servidor. Para seguir la demostración, usar el archivo `testdata/imagen_demo.png` como imagen de prueba.
 
-| Componente | Tecnología | Propósito |
-| Cliente y servidor | Go | Operaciones de gestión de imágenes y comunicación cliente-servidor |
-| Autenticación | Python + FastAPI | Login, token/sesión y validación de acceso |
-| Red | VLAN, VLSM, OSPF | Comunicación controlada entre sedes en fases de diseño e implementación |
-| Control de versiones | Git / GitHub | Historial, colaboración y evidencia de contribuciones |
-| Estadística | Datos exportados por logs | Tiempos, tamaños, frecuencias, errores y comparaciones |
+## Pruebas automatizadas
 
-Requisitos clave
-- RF-01: autenticación mediante FastAPI.
-- RF-02: carga de imágenes.
-- RF-04: consulta y búsqueda.
-- RF-06: descarga.
-- RF-07: eliminación solo por Administrador.
-- RF-08: registro de operaciones.
-- RF-10: autorización antes de recursos protegidos.
-- RNF-01: contraseñas con hash seguro.
-- RNF-02: validación de archivos en el servidor.
-- RNF-04: arquitectura modular.
-- RNF-06: manejo controlado de errores de red/servidor.
+Desde la carpeta `app-go`:
 
-La especificación completa y los criterios de aceptación se encuentran en docs/requirements/.
+```bash
+go test ./...
+go vet ./...
+```
 
-Datos medibles
+## Estructura
 
-Cada caso de uso producirá evidencia cuantitativa:
-- tiempo de autenticación;
-- intentos de login exitosos y fallidos;
-- tamaño de imágenes;
-- tiempo de carga y descarga;
-- número de búsquedas y descargas;
-- operaciones por categoría;
-- eliminaciones e intentos denegados;
-- tasa de errores.
-
-
-Estructura del repositorio
-proyecto-integrador/
+```text
+imageflow/
 ├── app-go/
-│ ├── cmd/
-│ ├── internal/
-│ └── README.md
-├── auth-service/
-│ ├── app/
-│ ├── tests/
-│ └── requirements.txt
-├── network/
-│ ├── diagrams/
-│ ├── configs/
-│ └── addressing/
-├── research/
-│ ├── instruments/
-│ ├── data/
-│ └── analysis/
+│   ├── cmd/
+│   │   ├── client/main.go
+│   │   └── server/main.go
+│   ├── internal/
+│   │   ├── client/api.go
+│   │   ├── handlers/image_handler.go
+│   │   ├── models/image.go
+│   │   ├── services/image_service.go
+│   │   ├── storage/local.go
+│   │   └── transport/server.go
+│   ├── data/
+│   ├── testdata/
+│   ├── go.mod
+│   └── README.md
 ├── docs/
+│   ├── phase2/
+│   ├── requirements/
+│   ├── traceability/
+│   └── use-cases/
 ├── LICENSE
 └── README.md
+```
 
+## Configuración
 
-Integrantes y responsabilidades
+| Variable | Valor predeterminado | Uso |
+|---|---|---|
+| `IMAGEFLOW_HOST` | `0.0.0.0` | Interfaz donde escucha el servidor. |
+| `IMAGEFLOW_PORT` | `8080` | Puerto HTTP. |
+| `IMAGEFLOW_DATA_DIR` | `./data` | Carpeta donde se guardan imágenes y metadatos. |
+| `IMAGEFLOW_SERVER_URL` | `http://localhost:8080` | URL a la que se conecta el cliente. |
 
-| Integrante | Área principal | Responsabilidades |
-| Sebastián Alexis Cumbal Molineros | Programación y Seguridad | Go cliente-servidor, integración FastAPI, autenticación/autorización, seguridad de archivos y requisitos de software |
-| Kevin Cruzate | Redes y Estadística | Red entre sedes, VLAN/VLSM/OSPF en fases posteriores, variables, métricas y análisis estadístico |
-| Ambos | Integración y documentación | Casos de uso, trazabilidad, README, pruebas integradas, video y defensa |
+Para cambiar el puerto del servidor en macOS/Linux:
 
+```bash
+IMAGEFLOW_PORT=8081 go run ./cmd/server
+```
 
-Convención de commits
-Se utilizarán mensajes breves y descriptivos. Ejemplos:
-docs: definir requisitos funcionales de ImageFlow
-feat: crear estructura inicial del servidor Go
-docs: definir variables y métricas estadísticas
-chore: crear estructura inicial de network
-docs: completar matriz de trazabilidad
+En la terminal del cliente:
 
-Cada integrante debe realizar commits desde su propia cuenta para que el historial evidencie participación real.
+```bash
+IMAGEFLOW_SERVER_URL=http://localhost:8081 go run ./cmd/client
+```
 
-Alcance actual
-En Fase 1 no se afirma que el sistema esté implementado. Se han definido los artefactos de planeación necesarios para convertir las necesidades del problema en requisitos verificables. Los resultados de rendimiento y estadísticas se medirán cuando exista un prototipo funcional.
+Para utilizar otro equipo como servidor, reemplazar `localhost` por la IP del equipo servidor y permitir el puerto en el firewall. Esta configuración permite una prueba de laboratorio en la red local.
 
-Seguridad prevista
-- Contraseñas protegidas con hash adaptativo.
-- Tokens/sesiones para acceso a recursos protegidos.
-- Verificación de roles en servidor.
-- Validación de formato y tamaño de archivos.
-- Registro de eventos relevantes sin almacenar secretos.
-- Principio de mínimo privilegio.
+## Endpoints HTTP
 
-Referencias técnicas
-- Go - Organizing a Go module: https://go.dev/doc/modules/layout
-- Go - net/http: https://go.dev/src/net/http/doc.go
-- FastAPI - OAuth2, hashing y JWT: https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/
-- OWASP - File Upload Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/File_Upload_Cheat_Sheet.html
-- OWASP - Password Storage Cheat Sheet: https://cheatsheetseries.owasp.org/cheatsheets/Password_Storage_Cheat_Sheet.html
-- RFC 2328 - OSPFv2: https://www.rfc-editor.org/info/rfc2328/
-- RFC 1918 - Direcciones privadas: https://www.rfc-editor.org/info/rfc1918/
-- NIST/SEMATECH e-Handbook: https://www.itl.nist.gov/div898/handbook/
-- WCAG 2.2: https://www.w3.org/TR/WCAG22/
+| Método | Ruta | Función |
+|---|---|---|
+| GET | `/health` | Comprueba la disponibilidad del servidor. |
+| POST | `/api/v1/images` | Carga una imagen mediante `multipart/form-data`; campos `file` y `category`. |
+| GET | `/api/v1/images` | Consulta imágenes; admite filtros `name` y `category`. |
+| GET | `/api/v1/images/{id}/download` | Descarga una imagen por ID. |
+| DELETE | `/api/v1/images/{id}` | Elimina una imagen por ID. |
 
-Repositorio
-URL: https://github.com/S3bas05/Proyecto-Integrador.git
+## Almacenamiento y decisiones técnicas
 
-Licencia
-La licencia del proyecto se definirá y agregará al repositorio antes de la entrega definitiva.
-Uso de herramientas de IA
-Las herramientas de IA pueden emplearse como apoyo para organización, revisión y generación de propuestas. El equipo debe revisar, comprender y validar cualquier contenido incorporado al proyecto y declarar su uso conforme a las indicaciones de la asignatura.
+- Archivos binarios: `app-go/data/images/`.
+- Metadatos: `app-go/data/metadata.json`.
+- Formatos aceptados: JPEG, PNG, GIF y WEBP.
+- Tamaño máximo: 10 MiB (10 × 1024 × 1024 bytes).
+- Los metadatos se serializan como JSON y los archivos se guardan en nombres internos generados por el servidor.
+- `sync.RWMutex` protege el acceso concurrente al almacenamiento local.
+
+## Requisitos pendientes y limitaciones
+
+| Elemento | Estado |
+|---|---|
+| Cliente y servidor independientes en Go | Implementado |
+| Comunicación HTTP real | Implementado |
+| Carga, consulta, búsqueda, descarga y eliminación | Implementado |
+| Persistencia local de archivos y metadatos | Implementado |
+| Validaciones y errores | Implementado |
+| Integración con autenticación FastAPI | Fase posterior según la guía académica |
+| Comunicación entre sedes y configuración de red | Fases posteriores |
+| Base de datos relacional, miniaturas y análisis antivirus | Fuera del alcance de este prototipo |
+
+## Autoría, licencia y uso de IA
+
+**Autor:** Sebastián Alexis Cumbal Molineros.  
+La presente entrega se desarrolla de forma individual. El autor asume el análisis, programación del cliente y servidor, modelado, validaciones, pruebas y documentación. La modalidad individual debe quedar registrada y autorizada por el docente.
+
+Se utilizó ChatGPT como herramienta de apoyo para organizar la arquitectura, revisar código y preparar documentación. El autor debe verificar, comprender y poder explicar cada componente del proyecto.
+
+Licencia MIT. Consultar `LICENSE`.
+
+## Enlaces de entrega
+
+- Repositorio Git: **PENDIENTE: pegar URL pública o con permisos del repositorio.**
+- Video demostrativo: **PENDIENTE: pegar URL del video.**
